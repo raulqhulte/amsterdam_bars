@@ -22,6 +22,8 @@ class _BarDetailsPageState extends State<BarDetailsPage> {
   List<DateTime> _visits = [];
   int _rating = 0;
 
+  bool get _visited => _visits.isNotEmpty;
+
   @override
   void initState() {
     super.initState();
@@ -59,15 +61,24 @@ class _BarDetailsPageState extends State<BarDetailsPage> {
       appBar: AppBar(title: Text(bar.name)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
-          await _visitsDao.addVisit(bar.id);
+          final wasVisited = _visited;
+          if (wasVisited) {
+            await _visitsDao.clearVisits(bar.id);
+          } else {
+            await _visitsDao.addVisit(bar.id);
+          }
           if (!mounted) return;
           await _loadVisits();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Visit logged 🍻')),
+            SnackBar(
+              content: Text(
+                wasVisited ? 'Marked as not visited.' : 'Marked as visited 🍻',
+              ),
+            ),
           );
         },
-        icon: const Icon(Icons.check),
-        label: const Text('Visited'),
+        icon: Icon(_visited ? Icons.undo : Icons.check),
+        label: Text(_visited ? 'Undo visited' : 'Visited'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -90,13 +101,21 @@ class _BarDetailsPageState extends State<BarDetailsPage> {
                 final starIndex = i + 1;
                 final filled = starIndex <= _rating;
                 return IconButton(
-                  onPressed: () => setState(() => _rating = starIndex),
+                  onPressed: () => setState(() {
+                    _rating = (_rating == starIndex) ? 0 : starIndex;
+                  }),
                   icon: Icon(
                     filled ? Icons.star : Icons.star_border,
                   ),
                 );
               }),
             ),
+            Text(
+              _rating == 0
+                  ? 'Tap a star to rate this bar.'
+                  : 'Your rating: $_rating/5',
+            ),
+            const SizedBox(height: 8),
             TextField(
               controller: _notesController,
               maxLines: 4,

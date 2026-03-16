@@ -16,6 +16,15 @@ class VisitsDao {
     });
   }
 
+  Future<void> clearVisits(String barId) async {
+    final db = await _db.database;
+    await db.delete(
+      'visits',
+      where: 'bar_id = ?',
+      whereArgs: [barId],
+    );
+  }
+
   Future<List<DateTime>> getVisitsForBar(String barId) async {
     final db = await _db.database;
 

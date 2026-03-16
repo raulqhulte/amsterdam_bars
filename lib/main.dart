@@ -49,6 +49,7 @@ class _AppStartupGateState extends State<AppStartupGate> {
 
   bool _loading = true;
   bool _hasList = false;
+  bool _isRoutingToName = false;
   String? _userName;
 
   @override
@@ -97,13 +98,17 @@ class _AppStartupGateState extends State<AppStartupGate> {
     }
 
     if (_userName == null || _userName!.trim().isEmpty) {
-      return Scaffold(
-        body: Center(
-          child: ElevatedButton(
-            onPressed: _goToEnterName,
-            child: const Text('Set your name'),
-          ),
-        ),
+      if (!_isRoutingToName) {
+        _isRoutingToName = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (!mounted) return;
+          await _goToEnterName();
+          _isRoutingToName = false;
+        });
+      }
+
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -288,15 +293,20 @@ class _BarsListPageState extends State<BarsListPage> {
                       visited ? Icons.check_circle : Icons.check_circle_outline,
                     ),
                     onPressed: () async {
-                      await _visitsDao.addVisit(bar.id);
+                      if (visited) {
+                        await _visitsDao.clearVisits(bar.id);
+                      } else {
+                        await _visitsDao.addVisit(bar.id);
+                      }
                       if (!mounted) return;
 
                       await _loadBars();
 
+                      final message = visited
+                          ? 'Marked "${bar.name}" as not visited.'
+                          : 'Marked "${bar.name}" as visited 🍻';
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Visit logged for "${bar.name}" 🍻'),
-                        ),
+                        SnackBar(content: Text(message)),
                       );
                     },
                   ),
