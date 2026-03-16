@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Local binary/logo assets (do not commit source images)
+/assets/logo/
