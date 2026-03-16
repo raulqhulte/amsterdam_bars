@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "650566917364",
+    "project_id": "amsterdam-bars-bd05a",
+    "storage_bucket": "amsterdam-bars-bd05a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650566917364:android:43e26c1057b88d195552a1",
+        "android_client_info": {
+          "package_name": "com.juliacreamer.amsterdambars"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5D8mGLyDwcVxaPGHcs6jZ8Il1Dhp-QAA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
